@@ -32,10 +32,8 @@ module.exports = function (grunt) {
 			dist: {
 				files: {
 					'<%= conf.dist %>/backbone-gravity-helper.js': [
-						'helpers/{,*/}*.js'
-					],
-					'<%= conf.dist %>/box2dweb.js': [
-						'lib/Box2dWeb-2.1.a.3.min.js'
+						'helpers/{,*/}*.js',
+						'lib/{,*/}*.js'
 					]
 				}
 			}
