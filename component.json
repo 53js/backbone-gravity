@@ -2,8 +2,6 @@
   "author": "53js",
   "name": "backbone-gravity",
   "version": "0.1.0",
-  "main": ["./build/box2dweb.js",
-  	"./build/backbone-gravity-helper.js"],
-  "dependencies": {},
-  "devDependencies": {}
+  "main": ["./backbone-gravity.js"],
+  "dependencies": {}
 }

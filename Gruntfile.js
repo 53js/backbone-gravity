@@ -31,7 +31,7 @@ module.exports = function (grunt) {
 		uglify: {
 			dist: {
 				files: {
-					'<%= conf.dist %>/backbone-gravity-helper.js': [
+					'backbone-gravity.js': [
 						'helpers/{,*/}*.js',
 						'lib/{,*/}*.js'
 					]
