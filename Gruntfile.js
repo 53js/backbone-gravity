@@ -31,10 +31,10 @@ module.exports = function (grunt) {
 		uglify: {
 			dist: {
 				files: {
-					'backbone-gravity-helper.js': [
+					'<%= conf.dist %>/backbone-gravity-helper.js': [
 						'helpers/{,*/}*.js'
 					],
-					'box2dweb.js': [
+					'<%= conf.dist %>/box2dweb.js': [
 						'lib/Box2dWeb-2.1.a.3.min.js'
 					]
 				}
