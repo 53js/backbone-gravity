@@ -32,8 +32,7 @@ module.exports = function (grunt) {
 			dist: {
 				files: {
 					'backbone-gravity.js': [
-						'helpers/{,*/}*.js',
-						'lib/{,*/}*.js'
+						'helpers/{,*/}*.js'
 					]
 				}
 			}
