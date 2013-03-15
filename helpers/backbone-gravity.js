@@ -28,32 +28,12 @@
 
 	BackboneGravity.Views = BackboneGravity.Views || {};
 
-	var WorldView = BackboneGravity.Views.WorldView = Backbone.View.extend({
+	var World = BackboneGravity.World = {
 
 		bodies: {},
 
 		initialize: function () {
 			this.world = new B2.b2World(new B2.b2Vec2(0, 10), true);
-		},
-
-		debug: function () {
-			if (this.debugCanvas) {
-				$(this.debugCanvas).fadeOut('fast');
-				this.debugCanvas = null;
-				return;
-			} else {
-				this.debugCanvas = document.getElementById('debug-canvas');
-				$(this.debugCanvas).fadeIn('fast');
-				this.debugCanvas.height = this.$el.height();
-				var debugDraw = new B2.b2DebugDraw();
-				debugDraw.SetSprite(this.debugCanvas.getContext('2d'));
-				debugDraw.SetDrawScale(BackboneGravity.Config.SCALE);
-				debugDraw.SetFillAlpha(0.3);
-				debugDraw.SetLineThickness(1.0);
-				debugDraw.SetFlags(B2.b2DebugDraw.e_shapeBit | B2.b2DebugDraw.e_jointBit);
-				this.world.SetDebugDraw(debugDraw);
-				this.world.DrawDebugData();
-			}
 		},
 
 		createBody: function (view, options) {
@@ -64,11 +44,6 @@
 			var body = _.extend({}, Body, view);
 			var opts = {};
 			if (view instanceof Backbone.View) {
-				_.extend(opts, {
-					width: view.$el.outerWidth(),
-					height: view.$el.outerHeight(),
-					angle: Math.random() * 1.5 - 1.5
-				});
 				body.view = view;
 			}
 			_.extend(opts, options);
@@ -88,8 +63,6 @@
 			this.bodies = null;
 		},
 
-		t: 0,
-
 		update: function () {
 			if (this.stopped) {
 				return;
@@ -102,16 +75,13 @@
 				body.update();
 		    }, this));
 
-		    this.world.ClearForces();
-		    if (this.debugCanvas) {
-				this.world.DrawDebugData();
-			}
-		   // if (this.t > 100)
-		    //	this.stop();
-		    this.t++;
+			this.execute();
+			this.world.ClearForces();
 
 		    BackboneGravity.loop(_.bind(this.update, this));
 		},
+
+		execute: function () {},
 
 		stop: function () {
 			if (this.started) {
@@ -119,8 +89,44 @@
 				this.started = false;
 			}
 		}
+	};
 
-	});
+	var WorldView = BackboneGravity.Views.WorldView = Backbone.View.extend(_.extend(World, {
+
+		setDebugSprite: function (element) {
+			this.debugSprite = element;
+			this.$debugSprite = $(element);
+		},
+
+		debug: function () {
+			if (this.debugCanvas) {
+				this.$debugSprite.fadeOut('fast');
+				this.debugCanvas = null;
+				return;
+			} else {
+				if (!this.debugSprite) {
+					throw 'Please set debug sprite';
+				}
+				this.debugCanvas = this.debugSprite;
+				$(this.debugCanvas).fadeIn('fast');
+				var debugDraw = new B2.b2DebugDraw();
+				debugDraw.SetSprite(this.debugCanvas.getContext('2d'));
+				debugDraw.SetDrawScale(BackboneGravity.Config.SCALE);
+				debugDraw.SetFillAlpha(0.3);
+				debugDraw.SetLineThickness(1.0);
+				debugDraw.SetFlags(B2.b2DebugDraw.e_shapeBit | B2.b2DebugDraw.e_jointBit);
+				this.world.SetDebugDraw(debugDraw);
+				this.world.DrawDebugData();
+			}
+		},
+
+		execute: function () {
+		    if (this.debugCanvas) {
+				this.world.DrawDebugData();
+			}
+		}
+
+	}));
 
 	var Body = BackboneGravity.Body = {
 
