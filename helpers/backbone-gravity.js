@@ -7,7 +7,7 @@
 	$ = root.Backbone.$,
 	_ = root._;
 
-	var BackboneGravity = root.BackboneGravity || {};
+	var BackboneGravity = root.BackboneGravity = root.BackboneGravity || {};
 	BackboneGravity.Config = BackboneGravity.Config || {};
 	BackboneGravity.Config.SCALE = 30;
 	BackboneGravity.Config.interval = 1000 / 60;
