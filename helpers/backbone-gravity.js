@@ -42,7 +42,7 @@
 				this.debugCanvas = null;
 				return;
 			} else {
-				this.debugCanvas = document.getElementById('debug');
+				this.debugCanvas = document.getElementById('debug-canvas');
 				$(this.debugCanvas).fadeIn('fast');
 				this.debugCanvas.height = this.$el.height();
 				var debugDraw = new B2.b2DebugDraw();
@@ -69,6 +69,7 @@
 					height: view.$el.outerHeight(),
 					angle: Math.random() * 1.5 - 1.5
 				});
+				body.view = view;
 			}
 			_.extend(opts, options);
 			body.create(this.world, opts);
@@ -137,13 +138,8 @@
 
 			var settings = _.extend({}, this.settings, options);
 
-			var fixDef = new B2.b2FixtureDef();
-			fixDef.density = settings.density;
-			fixDef.friction = settings.friction;
-			fixDef.restitution = settings.restitution;
-			fixDef.shape = new B2.b2PolygonShape();
-			fixDef.shape.SetAsBox(settings.width / BackboneGravity.Config.SCALE / 2, settings.height / BackboneGravity.Config.SCALE / 2);
-			
+			var fixDef = this.createRect(options);
+
 			var bodyDef = new B2.b2BodyDef();
 			bodyDef.type = settings.dynamic ? B2.b2Body.b2_dynamicBody : B2.b2Body.b2_staticBody;
 			bodyDef.position.x = settings.x / BackboneGravity.Config.SCALE;
@@ -153,7 +149,32 @@
 			var body = this.body = world.CreateBody(bodyDef);
 			body.CreateFixture(fixDef);
 
+			if (this.view) {
+				this.view.on('resize', this.updateShape, this);
+			}
+
 			return body;
+		},
+
+		createRect: function (options) {
+			var settings = _.extend({}, this.settings, options);
+
+			var fixDef = new B2.b2FixtureDef();
+			fixDef.density = settings.density;
+			fixDef.friction = settings.friction;
+			fixDef.restitution = settings.restitution;
+			fixDef.shape = new B2.b2PolygonShape();
+			fixDef.shape.SetAsBox(settings.width / BackboneGravity.Config.SCALE / 2, settings.height / BackboneGravity.Config.SCALE / 2);
+			return fixDef;
+		},
+
+		updateShape: function (options) {
+			var fixtureList = this.body.GetFixtureList();
+			if (fixtureList) {
+				this.body.DestroyFixture(fixtureList);
+			}
+			var fixDef = this.createRect(options);
+			this.body.CreateFixture(fixDef);
 		},
 
 		getPosition: function () {
